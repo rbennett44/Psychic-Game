@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+
+        <h1>The Psychic Game</h1>
+        <p>Guess what I'm thinking of. . .</p>
+        <p id="game">Try me and see if you can win.</p>
+        <p>Guesses left: <span id="total-guesses"></span></p>
+        <p>Guesses so far: <span id="guesses"></span></p>
+        
+    </div>
+    
+<script type="text/javascript">
+    // create array that computer can use to randomly pick letter
+    var computerChoices = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+
+    // variables that hold number of wins and losses
+    var wins = 0;
+    var losses = 0;
+
+    //run whenever a user presses a key
+    document.onkeyup = function(event) {
+        
+        //determines which key was pressed
+        var userText = event.key;
+        //lets the computer randomly select from the array    
+        var computerGuess = computerChoices[Math.floor(Math.random() * computerChoices.length)];
+        //logic that determines the outcome.  If userText is equal to the compterGuss, var wins goes up 1. Otherwise, losses increases 1.
+        if (userText === computerGuess) {
+            wins++;
+        } else {
+            losses++;}
+            
+            var gameInfo = 
+            "<p>You chose " + userText + "</p>" +
+            "<p>The computer chose " + computerGuess + "</p>" +
+            "<p>Wins: " + wins + "</p>" +
+            "<p>Losses: " + losses + "</p>"
+            
+            
+            //post wins and losses to page
+            
+            document.getElementById("#game").html = gameInfo;
+    };
+
+//Set the Number of turns
+
+//There are 10 turns and the game should count down from 10 each time the user lets go of a button
+function countDown(keyup) {
+    var guessesLeft = 10;
+    
+}
+
+
+</script>
+</body>
+</html>
