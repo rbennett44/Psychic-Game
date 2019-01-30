@@ -1,45 +1,124 @@
-// create array that computer can use to randomly pick letter
-var computerChoices = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+//VARIABLES 
+//------------------------------------------------------------------------------------
 
-// variables that hold number of wins and losses
-var wins = 0;
-var losses = 0;
+// Array of excellent hockey players
+var playerArray = ["gretsky", "orr", "crosby", "selanne", "lidstrom", "lemieux"];
 
-//run whenever a user presses a key
-document.onkeyup = function(event) {
-    
-    //determines which key was pressed
-    var userText = event.key;
-    //lets the computer randomly select from the array    
-    var computerGuess = computerChoices[Math.floor(Math.random() * computerChoices.length)];
-    //logic that determines the outcome.  If userText is equal to the compterGuss, var wins goes up 1. Otherwise, losses increases 1.
-    if (userText === computerGuess) {
-        wins++;
-    } else {
-        losses++;}
-        
-        var gameInfo = 
-        "<p>You chose " + userText + "</p>" +
-        "<p>The computer chose " + computerGuess + "</p>" +
-        "<p>Wins: " + wins + "</p>" +
-        "<p>Losses: " + losses + "</p>"
-        
-        
-        //post wins and losses to page
-        
-        document.getElementById("#game") = gameInfo;
+//Computer-selected player will be stored here
+var chosenPlayer = "";
+
+//breaks the chosenPlayer into individual letters
+var lettersInChosenPlayer = [];
+
+//the number of blanks to corresond with the lettersInChosenPlayer
+var numBlanks = 0;
+
+//holds the mix of blanks and solved letters
+var blanksAndSuccesses = [];
+
+//Holds the letters guessed
+var lettersGuessed = "";
+
+//Holds all the wrong guesses
+var wrongLetters = [];
+
+//Game counters
+var winCounter = 0;
+var lossCounter = 0;
+var remainingGuesses = 9;
+
+//FUNCTIONS TO RUN THE GAME
+//------------------------------------------------------------
+
+//start the game (call back function).  This will run what the game will do
+function startGame() {
+    //set the guesses to 9
+    remainingGuesses = 9;
+
+    //randomly select a player from the array and display it in html "player" as blanks
+    chosenPlayer = playerArray[Math.floor(Math.random() * playerArray.length)];
+
+    //the word is broken into individual letters
+    lettersInChosenPlayer = chosenPlayer.split("");
+
+    //count the number of letters in the word
+    numBlanks = lettersInChosenPlayer.length;
+
+    //test
+    console.log(chosenPlayer);
+
+    //reset guess and success array 
+    blanksAndSuccesses = [];
+
+    //reset wrong guesses 
+    wrongLetters = [];
+
+    //fill in the blanks with appropriate number of blanks based on lettersInChosenPlayer
+    for (var i = 0; i < numBlanks; i++) {
+        blanksAndSuccesses.push("_");
+    }
+
+    console.log(blanksAndSuccesses);
+
+    //reprints the guesses left to 9
+    document.getElementById("guesses-left").innerHTML = remainingGuesses;
+
+    //Prints blanks at the beginning of the round
+    document.getElementById("word-blanks").innerHTML = blanksAndSuccesses.join(" ");
+
+    document.getElementById("wrong-guesses").innerHTML = wrongLetters.join(" ");
 };
 
-//Set the Number of turns
+function checkLetters(letter) {
+    var letterInWord = false;
 
-//There are 10 turns and the game should count down from 10 each time the user lets go of a button
-function countDown(onclick) {
-var guessesLeft = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-//??
-} 
+    for (var i = 0; i < numBlanks; i++) {
+        if (chosenPlayer[i] === letter) {
+            letterInWord = true;
+        }
+    }
 
-//now I need to put the countDown into #total-guesses
-//???
+    if (letterInWord) {
+        for (var j = 0; j < numBlanks; j++) {
+            if (chosenPlayer[j] === letter) {
+                blanksAndSuccesses[j] = letter;
+            }
+        }
+        console.log(blanksAndSuccesses);
+    }
+    else {
+        wrongLetters.push(letter);
+        remainingGuesses--;
+    }
+};
 
-//There are 10 turns and the game should tell the user how many turns they have left after they press a key
-//run the about countDown function in reverse, then put the result (countUP) into #guesses
+function roundComplete() {
+    console.log("WinCount: " + winCounter + " | Loss Count: " + lossCounter + " | Remaining Guesses: " + remainingGuesses);
+    document.getElementById("guesses-left").innerHTML = remainingGuesses;
+    document.getElementById("word-blanks").innerHTML = blanksAndSuccesses.join("");
+    document.getElementById("wrong-guesses").innerHTML = wrongLetters.join("");
+
+    if (lettersInChosenPlayer.toString() === blanksAndSuccesses.toString()) {
+        winCounter++;
+        alert("You Won!");
+        document.getElementById("win-counter").innerHTML = winCounter;
+
+        startGame();
+    }
+    else if (remainingGuesses === 0) {
+        lossCounter++;
+        alert("You Lost!");
+        document.getElementById("loss-counter").innerHTML = lossCounter;
+
+        startGame();
+    }
+
+
+};
+
+startGame();
+document.onkeyup = function(event) {
+    lettersGuessed = String.fromCharCode(event.which).toLowerCase();
+    checkLetters(lettersGuessed);
+    roundComplete();
+};
